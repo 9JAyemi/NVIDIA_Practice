@@ -10,7 +10,7 @@ assert {reset |-> (program_counter == 0) && (result == 0)}
 
 # test ADD instruction executes in 1 clock cycle
 assume {registers[rs] > 0 && registers[rt] > 0}
-assert { alu_op == 2'b00 && (reg_write) |-> ##1 registers[$past(rd)] == result }
+assert { alu_op == 2'b00 && (reg_write) |-> ##1 result == registers[$past(rs)] + registers[$past(rt)]}
 
 # Set the time limit to 1 hour (3600 seconds)
 set_prove_time_limit 3600
