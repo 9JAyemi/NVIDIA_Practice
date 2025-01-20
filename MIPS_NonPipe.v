@@ -136,7 +136,6 @@ module Controller(
                 alu_src = 0;
                 reg_write = 0;
                 alu_op = 2'b11;
-                
             end
             6'b001011: begin // BGT (using SLT with reversed operands)
                 alu_src = 0;
