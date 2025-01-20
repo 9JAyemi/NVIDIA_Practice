@@ -1,0 +1,1 @@
+analyze -sv fifo.v
