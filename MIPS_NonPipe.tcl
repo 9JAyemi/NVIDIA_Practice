@@ -18,7 +18,7 @@ assert {reset |-> (pc == 0) && (result == 0)}
 assume {pc == 0}
 assert {(!reset) && instruction[31:26] == 6'b000000 && instruction[5:0] == 6'b100000 |-> ##1  result == (registers[rs]) + (registers[rt]) && pc == $past(pc) + 4} 
 assert {(!reset) && instruction[31:26] == 6'b000000 && instruction[5:0] == 6'b100000 |-> ##1  registers[$past(rd)] == $past(result) && pc == $past(pc) + 4}
-assert {(!reset) && instruction[31:26] == 6'b000000 && instruction[5:0] == 6'b100000 |-> ##0 reg_write == 1};
+assert {(!reset) && instruction[31:26] == 6'b000000 && instruction[5:0] == 6'b100000 |-> ##1 reg_write == 1};
 
 
 
