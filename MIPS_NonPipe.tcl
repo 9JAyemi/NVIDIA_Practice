@@ -13,8 +13,9 @@ assert {reset |-> (program_counter == 0) && (result == 0)}
 # assert { alu_op == 2'b00 && (reg_write) |-> ##1 result == registers[$past(rs)] + registers[$past(rt)]}
 assume {instruction[31:26] == 6'b000000 |-> ##1 $stable(instruction[31:26])}
 assume {instruction[5:0] == 6'b100000 |-> ##1 $stable(instruction[5:0])}
-assume {alu_op |-> ##1 $stable}
-assume {reg_write |-> ##1 $stable}
+assume {alu_op == 1 |-> ##1 $stable(alu_op)}
+assume {reg_write == 1 |-> ##1 $stable (alu_op)}
+
 assert {(!reset) && instruction[31:26] == 6'b000000 && instruction[5:0] == 6'b100000 && alu_op == 2'b00 && reg_write |-> ##1  result == $past(registers[$past(rs)]) + $past(registers[$past(rt)])} 
 assert {(!reset) && instruction[31:26] == 6'b000000 && instruction[5:0] == 6'b100000 && alu_op == 2'b00 && reg_write |-> ##1 (registers[$past(rd)] == result)}
 
