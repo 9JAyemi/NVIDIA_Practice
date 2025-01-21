@@ -14,6 +14,7 @@ module MIPS_CPU(
     wire [1:0] alu_op;
     reg [31:0] registers [0:31];
    reg [31:0] pc;
+   reg [1:0] next_pc;
 
     // Instantiate Datapath
     Datapath dp(
@@ -23,6 +24,7 @@ module MIPS_CPU(
         .alu_src(alu_src),
         .reg_write(reg_write),
         .alu_op(alu_op),
+        .next_pc(next_pc),
         .result(result),
         .registers(registers),
         .program_counter(pc)
@@ -36,7 +38,8 @@ module MIPS_CPU(
         .program_counter(pc),
         .alu_src(alu_src),
         .reg_write(reg_write),
-        .alu_op(alu_op)
+        .alu_op(alu_op),
+        .next_pc(next_pc)
     );
 
 endmodule
@@ -49,6 +52,7 @@ module Datapath(
     input alu_src,
     input reg_write,
     input [1:0] alu_op,
+    input [1:0] next_pc,
     output reg [31:0] result,
     output reg [31:0] registers [0:31],
     output reg [31:0] program_counter
