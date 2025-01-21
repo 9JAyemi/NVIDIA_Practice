@@ -16,7 +16,7 @@ assert {(!reset) && alu_op == 2'b00 && reg_write |-> ##1 (result == $past(regist
 
 # Set the time limit to 1 hour (3600 seconds)
 set_prove_time_limit 3600
-set_hierarchical_access -enable
+
 set_engine_mode Tri
 prove -all
 
