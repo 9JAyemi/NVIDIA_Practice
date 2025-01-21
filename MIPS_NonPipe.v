@@ -12,6 +12,7 @@ module MIPS_CPU(
     wire [31:0] reg_data1, reg_data2, alu_result, immediate;
     wire alu_src, reg_write;
     wire [1:0] alu_op;
+    reg [31:0] registers [0:31];
 
     // Instantiate Datapath
     Datapath dp(
@@ -21,13 +22,15 @@ module MIPS_CPU(
         .alu_src(alu_src),
         .reg_write(reg_write),
         .alu_op(alu_op),
-        .result(result)
+        .result(result),
+        .registers(registers)
     );
 
     // Instantiate Controller
     Controller ctrl(
         .opcode(instruction[31:26]),
         .funct(instruction[5:0]),
+        .registers(registers),
         .alu_src(alu_src),
         .reg_write(reg_write),
         .alu_op(alu_op)
@@ -44,9 +47,10 @@ module Datapath(
     input reg_write,
     input [1:0] alu_op,
     output reg [31:0] result
+    output reg [31:0] registers [0:31];
 );
     
-    reg [31:0] registers [0:31];
+   // reg [31:0] registers [0:31];
     reg [31:0] alu_input1, alu_input2;
     reg [31:0] program_counter;  // Added Program Counter
     wire [4:0] rs, rt, rd;
@@ -101,6 +105,7 @@ module Controller(
     input reset,
     input [5:0] opcode,
     input [5:0] funct,
+    input [31:0] registers [0:31];
     output reg alu_src,
     output reg reg_write,
     output reg [1:0] alu_op
