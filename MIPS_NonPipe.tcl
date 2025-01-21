@@ -6,7 +6,7 @@ clock clk
 reset reset
 
 #test that upon reset, resets program counter and alu results
-assert {reset |-> (top.dp.program_counter == 0) && (result == 0)}
+assert {reset |-> (program_counter == 0) && (result == 0)}
 
 # test ADD instruction executes in 1 clock cycle
 assume {result > 0}
