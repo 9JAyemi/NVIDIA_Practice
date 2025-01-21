@@ -97,6 +97,8 @@ endmodule
 
 // Controller module
 module Controller(
+    input clk,
+    input reset,
     input [5:0] opcode,
     input [5:0] funct,
     output reg alu_src,
@@ -104,52 +106,84 @@ module Controller(
     output reg [1:0] alu_op
 );
 
+    // State definition
+    typedef enum logic [1:0] {
+        IDLE, EXECUTE
+    } state_t;
+
+    state_t current_state, next_state;
+
+    // Sequential logic for state transition
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            current_state <= IDLE;
+        end else begin
+            current_state <= next_state;
+        end
+    end
+
+    // Combinational logic for next state and outputs
     always @(*) begin
-        case (opcode)
-            6'b000000: begin // R-type instructions
-                alu_src = 0;
-                reg_write = 1;
-                case (funct)
-                    6'b100000: alu_op = 2'b00; // ADD
-                    6'b100010: alu_op = 2'b01; // SUB
-                    6'b100100: alu_op = 2'b10; // AND
-                    6'b101010: alu_op = 2'b11; // SLT (for BLT and BGT)
-                    6'b001000: begin // JR
+        next_state = current_state;
+        alu_src = 0;
+        reg_write = 0;
+        alu_op = 2'b00;
+        case (current_state)
+            IDLE: begin
+                if (opcode != 6'b000000 || funct != 6'b001000) begin
+                    next_state = EXECUTE;
+                end
+            end
+            EXECUTE: begin
+                case (opcode)
+                    6'b000000: begin // R-type instructions
+                        alu_src = 0;
+                        reg_write = 1;
+                        case (funct)
+                            6'b100000: alu_op = 2'b00; // ADD
+                            6'b100010: alu_op = 2'b01; // SUB
+                            6'b100100: alu_op = 2'b10; // AND
+                            6'b101010: alu_op = 2'b11; // SLT
+                            6'b001000: begin // JR
+                                alu_src = 0;
+                                reg_write = 0;
+                                next_state = IDLE;
+                            end
+                            default: alu_op = 2'b00;
+                        endcase
+                    end
+                    6'b001000: begin // ADDI
+                        alu_src = 1;
+                        reg_write = 1;
+                        alu_op = 2'b00;
+                    end
+                    6'b000100: begin // BEQ
                         alu_src = 0;
                         reg_write = 0;
+                        alu_op = 2'b01;
                     end
-                    default: alu_op = 2'b00;
+                    6'b000101: begin // BNE
+                        alu_src = 0;
+                        reg_write = 0;
+                        alu_op = 2'b01;
+                    end
+                    6'b001010: begin // BLT
+                        alu_src = 0;
+                        reg_write = 0;
+                        alu_op = 2'b11;
+                    end
+                    6'b001011: begin // BGT
+                        alu_src = 0;
+                        reg_write = 0;
+                        alu_op = 2'b11;
+                    end
+                    default: begin
+                        alu_src = 0;
+                        reg_write = 0;
+                        alu_op = 2'b00;
+                    end
                 endcase
-            end
-            6'b001000: begin // ADDI
-                alu_src = 1;
-                reg_write = 1;
-                alu_op = 2'b00;
-            end
-            6'b000100: begin // BEQ (using subtraction)
-                alu_src = 0;
-                reg_write = 0;
-                alu_op = 2'b01;
-            end
-            6'b000101: begin // BNE (using subtraction)
-                alu_src = 0;
-                reg_write = 0;
-                alu_op = 2'b01;
-            end
-            6'b001010: begin // BLT (assuming SLT logic)
-                alu_src = 0;
-                reg_write = 0;
-                alu_op = 2'b11;
-            end
-            6'b001011: begin // BGT (using SLT with reversed operands)
-                alu_src = 0;
-                reg_write = 0;
-                alu_op = 2'b11;
-            end
-            default: begin
-                alu_src = 0;
-                reg_write = 0;
-                alu_op = 2'b00;
+                next_state = IDLE;
             end
         endcase
     end
