@@ -16,6 +16,7 @@ assert {(!reset) && instruction[31:26] == 6'b000000 && instruction[5:0] == 6'b10
 
 # Set the time limit to 1 hour (3600 seconds)
 set_prove_time_limit 3600
+set_hierarchical_access -enable
 set_engine_mode Tri
 prove -all
 
