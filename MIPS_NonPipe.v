@@ -63,12 +63,12 @@ module Datapath(
         alu_input1 = registers[rs];
         alu_input2 = alu_src ? sign_ext_imm : registers[rt];
     end
-
+    integer i;
     always @(posedge clk or posedge reset) begin
         if (reset) begin
             program_counter <= 0;  // Reset PC
             result <= 0;
-            integer i;
+            
             for (i = 0; i < 32; i = i + 1) begin
                 registers[i] <= 0;  // Reset all registers
         end
