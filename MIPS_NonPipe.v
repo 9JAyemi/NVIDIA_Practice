@@ -46,8 +46,8 @@ module Datapath(
     input alu_src,
     input reg_write,
     input [1:0] alu_op,
-    output reg [31:0] result
-    output reg [31:0] registers [0:31];
+    output reg [31:0] result,
+    output reg [31:0] registers [0:31]
 );
     
    // reg [31:0] registers [0:31];
@@ -105,7 +105,7 @@ module Controller(
     input reset,
     input [5:0] opcode,
     input [5:0] funct,
-    input [31:0] registers [0:31];
+    input [31:0] registers [0:31],
     output reg alu_src,
     output reg reg_write,
     output reg [1:0] alu_op
