@@ -64,12 +64,17 @@ module Datapath(
     wire [4:0] rs, rt, rd;
     wire [15:0] immediate;
     wire [31:0] sign_ext_imm;
+    wire [31:0] pc_next_plus_4;
+    
+
+
 
     assign rs = instruction[25:21];
     assign rt = instruction[20:16];
     assign rd = instruction[15:11];
     assign immediate = instruction[15:0];
     assign sign_ext_imm = {{16{immediate[15]}}, immediate};
+    assign pc_next_plus_4 = program_counter + 4;
 
     always @(*) begin
         alu_input1 = registers[rs];
@@ -93,7 +98,7 @@ module Datapath(
                     program_counter <= registers[rs];
                 end
                 2: begin
-                    program_counter <= {(program_counter + 4)[31:28], instruction[25:0], 2'b0};
+                    program_counter <= {pc_next_plus_4[31:28], instruction[25:0], 2'b00};
                 end
                 default:
                     program_counter <= program_counter + 4;
