@@ -103,6 +103,7 @@ module Datapath(
                 2: begin
                     program_counter <= {pc_next_plus_4[31:28], instruction[25:0], 2'b00};
                     j_db <= 1;
+                    
                 end
                 default:
                     program_counter <= program_counter + 4;
