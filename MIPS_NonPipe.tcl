@@ -21,7 +21,7 @@ assert {(!reset) && instruction[31:26] == 6'b000000 && instruction[5:0] == 6'b10
 assert {(!reset) && instruction[31:26] == 6'b000000 && instruction[5:0] == 6'b100000 |-> ##1 reg_write == 1};
 
 # test JR instruction executes in 1 clock cycle
-assert {(!reset) && instruction[31:26] == 6'b000010 |-> ##1 next_pc == 2};
+assert {(!reset) && instruction[31:26] == 6'b000010 |-> ##1 j_db == 1};
 
 
 

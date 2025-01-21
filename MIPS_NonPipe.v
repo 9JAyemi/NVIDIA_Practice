@@ -15,6 +15,7 @@ module MIPS_CPU(
     reg [31:0] registers [0:31];
    reg [31:0] pc;
    reg [1:0] next_pc;
+   reg j_db;
 
     // Instantiate Datapath
     Datapath dp(
@@ -27,7 +28,8 @@ module MIPS_CPU(
         .next_pc(next_pc),
         .result(result),
         .registers(registers),
-        .program_counter(pc)
+        .program_counter(pc),
+        .j_db(j_db)
     );
 
     // Instantiate Controller
@@ -55,7 +57,8 @@ module Datapath(
     input [1:0] next_pc,
     output reg [31:0] result,
     output reg [31:0] registers [0:31],
-    output reg [31:0] program_counter
+    output reg [31:0] program_counter,
+    output reg j_db
 );
     
    // reg [31:0] registers [0:31];
@@ -99,6 +102,7 @@ module Datapath(
                 end
                 2: begin
                     program_counter <= {pc_next_plus_4[31:28], instruction[25:0], 2'b00};
+                    j_db <= 1;
                 end
                 default:
                     program_counter <= program_counter + 4;
