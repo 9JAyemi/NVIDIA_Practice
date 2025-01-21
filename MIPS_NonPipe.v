@@ -68,6 +68,10 @@ module Datapath(
         if (reset) begin
             program_counter <= 0;  // Reset PC
             result <= 0;
+            integer i;
+            for (i = 0; i < 32; i = i + 1) begin
+                registers[i] <= 0;  // Reset all registers
+        end
         end else begin
             program_counter <= program_counter + 4;  // Increment PC by 4
             case (alu_op)
