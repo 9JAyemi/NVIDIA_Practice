@@ -16,6 +16,7 @@ assert {(!reset) && alu_src == 0 && instruction[31:26] == 6'b000000 && instructi
 assert {(!reset) && alu_src == 0 && instruction[31:26] == 6'b000000 && instruction[5:0] == 6'b100000 && alu_op == 2'b00 && reg_write |-> ##1 (registers[$past(rd)] == result)}
 
 
+
 # Set the time limit to 1 hour (3600 seconds)
 set_prove_time_limit 3600
 
