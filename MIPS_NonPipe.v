@@ -81,7 +81,20 @@ module Datapath(
                 registers[i] <= 0;  // Reset all registers
         end
         end else begin
-            program_counter <= program_counter + 4;  // Increment PC by 4
+            case(next_pc)
+                0: begin
+                    program_counter <= program_counter + 4;
+                end
+                1: begin
+                    program_counter <= registers[rs];
+                end
+                2: begin
+                    program_counter <= {(program_counter + 4)[31:28], instruction[25:0], 2'b0};
+                end
+                default:
+                    program_counter <= program_counter + 4;
+            endcase
+          //  program_counter <= next_pc ? registers[rs] : program_counter + 4 ;  // Increment PC by 4
             case (alu_op)
                 2'b00: result <= alu_input1 + alu_input2; // ADD
                 2'b01: result <= alu_input1 - alu_input2; // SUB
@@ -92,12 +105,6 @@ module Datapath(
             if (reg_write) begin
                 registers[rd] <= result;
             end
-        end
-    end
-
-    always @(posedge clk) begin
-        if (instruction[31:26] == 6'b000000 && instruction[5:0] == 6'b001000) begin // JR
-            program_counter <= registers[rs];  // Jump to register address
         end
     end
 
@@ -113,7 +120,8 @@ module Controller(
     input reg [31:0] program_counter,
     output reg alu_src,
     output reg reg_write,
-    output reg [1:0] alu_op
+    output reg [1:0] alu_op,
+    output reg [1:0] next_pc
 );
 
     // State definition
@@ -138,6 +146,7 @@ module Controller(
         alu_src = 0;
         reg_write = 0;
         alu_op = 2'b00;
+        next_pc = 0;
 
         case (current_state)
             IDLE: begin
@@ -158,6 +167,7 @@ module Controller(
                             6'b001000: begin // JR
                                 alu_src = 0;
                                 reg_write = 0;
+                                next_pc = 1;
                                 next_state = IDLE;
                             end
                             default: alu_op = 2'b00;
@@ -188,10 +198,14 @@ module Controller(
                         reg_write = 0;
                         alu_op = 2'b11;
                     end
+                    6'b000010: begin //J
+                       next_pc = 2;
+                   end
                     default: begin
                         alu_src = 0;
                         reg_write = 0;
                         alu_op = 2'b00;
+                        next_pc = 0;
                     end
                 endcase
                 next_state = IDLE;
