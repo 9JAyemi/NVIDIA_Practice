@@ -1,6 +1,6 @@
 analyze -sv MIPS_NonPipe.v
 
-elaborate -top MIPS_CPU
+elaborate -top dp
 
 clock clk
 reset reset
