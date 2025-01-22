@@ -184,10 +184,10 @@ module PUnCDatapath1(
 			pc <= 16'd0;
 		end 
 		if (pc_up) begin
-			pc = pc + 16'd1;
+			pc <= pc + 16'd1;
 		end
 		if (pc_ld || (br && ir[`OC] == `OC_BR)) begin
-			pc = (JMP_RET_JSRR) ? (alu_c):
+			pc <= (JMP_RET_JSRR) ? (alu_c):
 				 (~JMP_RET_JSRR) ? (pc_adder): 7'd77;
 		end
 	end
@@ -195,9 +195,9 @@ module PUnCDatapath1(
 	// CC FUNCTIONALITTY
 	always @(posedge clk) begin
 		if (cc_en) begin
-			N = alu_c[15]; 
-			Z = ~(|alu_c); // !alu_c; // ~(|alu_c); // 16-bit bitwise nor
-			P = ~alu_c[15] & (|alu_c); // ~alu_c[15] && alu_c; // (|alu_c); // ensures that P isnt on for 0  
+			N <= alu_c[15]; 
+			Z <= ~(|alu_c); // !alu_c; // ~(|alu_c); // 16-bit bitwise nor
+			P <= ~alu_c[15] & (|alu_c); // ~alu_c[15] && alu_c; // (|alu_c); // ensures that P isnt on for 0  
 		end
 	end
 
