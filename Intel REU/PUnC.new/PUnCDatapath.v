@@ -210,8 +210,8 @@ assign w_data_mem = !w_data_mem_sig ? r_data_0_reg : r_data_1_reg;
 
 // what gets loaded into pc? (CHECK r_addr_0[7])
 reg [15:0] ircPC;
-always @(*) begin
-ircPC = pc + 1;
+always @(posedge clk) begin
+ircPC <= pc + 1;
 
 end
 assign nextPC = (pc_mux == 3'b000)  ? ircPC :  
