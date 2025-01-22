@@ -1,0 +1,128 @@
+5FE0   // AND R7, R7 #0  (R7 = 0)
+5007   // AND R0, R0 R7 // (R0 = 0)
+1FEE   // ADD R7, R7 #14 (R7 = 14) This is the first line of the loop
+126F   // ADD R1, R1 #15 // (R1 = 15) 
+126F   // ADD R1, R1 #15 // (R1 = 30) This is the pointer to the first index in the array
+14B1   // ADD R2, R2 #-15 // (R2 = -15)
+14B1   // ADD R2, R2 #-15 // (R2 = -30)
+14BD   // ADD R2, R2 #-3 // (R2 = -33) This is the value compared to determine the termination condition
+16E1   // ADD R3, R3 #1 // (R3 = 1)
+3614   // ST R3, #20 // (Mem[30] = 1)
+16E1   // ADD R3, R3 #1 // (R3 = 2)
+3613   // ST R3, #19 // (Mem[31] = 2)
+16E1   // ADD R3, R3 #1 // (R3 = 3)
+7642   // STR R3, R1, #2// (Mem[32] = 3) By now the array has been fully instantiated
+6640   // LDR R3, R1 #0 // (R3 = Mem[R1]) Save value at pointer in array
+96FF   // NOT R3, R3
+16E1   // ADD R3, R3 #1 // R3 = (-Mem[R1]) Negate the value
+7640   // STR R3, R1 #0 // (Mem[R1] = R3) Save the negative value back into the location of the pointer
+1261   // ADD R1, R1 #1 // (R1++) Increment the pointer
+1842   // ADD R4, R1 R2 // (cc_set) Determine if we have reached the end of the array
+0601   // BRzp #1 // if finished iteration, halt
+C1C0   // RET // goTo subroutine
+F000   // HALT
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
+0000
