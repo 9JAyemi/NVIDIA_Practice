@@ -2,7 +2,7 @@
 // Datapath for PUnC LC3 Processor
 //==============================================================================
 
-`include "Memory.v"
+`include "Memory1.v"
 `include "RegisterFile.v"
 `include "Defines.v"
 
