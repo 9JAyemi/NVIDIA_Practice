@@ -59,7 +59,7 @@ module PUnC1(
    
 
    // SEXT Controls
-   wire		[10:0] const;
+   wire		[10:0] const_n;
    wire		[3:0]  SEXT_Select;
 
 	// Declare your wires for connecting the datapath to the controller here
@@ -95,7 +95,7 @@ module PUnC1(
     	.n(n),
     	.z(z),
     	.p(p),
-		.const(const),
+		.const_n(const_n),
 		.SEXT_Select(SEXT_Select)
 	);
 
@@ -136,7 +136,7 @@ module PUnC1(
     	.n(n),
     	.z(z),
     	.p(p),
-		.const(const),
+		.const_n(const_n),
 		.SEXT_Select(SEXT_Select)
 	);
 
