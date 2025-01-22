@@ -5,3 +5,5 @@ clock clk
 reset rst
 
 assert {rst |-> pc_clr}
+
+prove -all
