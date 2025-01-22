@@ -1,4 +1,4 @@
-analyze -sv PUnC.v
+analyze -sv PUnC1.v
 elaborate -top PUnC
 
 clock clk

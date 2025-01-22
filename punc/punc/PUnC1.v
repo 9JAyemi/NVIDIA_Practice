@@ -2,8 +2,8 @@
 // Module for PUnC LC3 Processor
 //==============================================================================
 
-`include "PUnCDatapath.v"
-`include "PUnCControl.v"
+`include "PUnCDatapath1.v"
+`include "PUnCControl1.v"
 
 module PUnC(
 	// External Inputs
