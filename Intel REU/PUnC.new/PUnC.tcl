@@ -8,3 +8,4 @@ reset rst
 
 assert {rst |-> ##1 pc_ld == 0}
 
+prove -all
