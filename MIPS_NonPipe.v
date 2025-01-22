@@ -164,9 +164,10 @@ module Controller(
 
         case (current_state)
             IDLE: begin
-                if (opcode != 6'b000000 || funct != 6'b001000) begin
+                
                     next_state = EXECUTE;
-                end
+                
+                
             end
             EXECUTE: begin
                 case (opcode)
