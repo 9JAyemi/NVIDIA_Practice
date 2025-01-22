@@ -58,7 +58,7 @@ module PUnCDatapath(
    
 
    // SEXT Controls
-   input 	wire	[10:0] const,
+   input 	wire	[10:0] const_n,
    input 	wire	[3:0]  SEXT_Select,
 
    // Output signals to controller
@@ -207,10 +207,10 @@ module PUnCDatapath(
 	assign pc_adder = /*cheat*/(STR == 1'd1) ? (alu_c) : (pc + sign_extended_const);	
 
 	// SEXT FUNCTIONALY
-	assign sign_extended_const = (SEXT_Select == 4'b1000) ? {{11{const[4]}}, const[4:0]}: // 5 -> 16 bit
-								(SEXT_Select == 4'b0100) ? {{10{const[5]}}, const[5:0]}: // 6 -> 16 bit
-								(SEXT_Select == 4'b0010) ? {{7{const[8]}}, const[8:0]}: // 9 -> 16 bit
-								(SEXT_Select == 4'b0001) ? {{5{const[10]}}, const[10:0]}: 7'd77; // 10 -> 16-bit
+	assign sign_extended_const = (SEXT_Select == 4'b1000) ? {{11{const_n[4]}}, const_n[4:0]}: // 5 -> 16 bit
+								(SEXT_Select == 4'b0100) ? {{10{const_n[5]}}, const_n[5:0]}: // 6 -> 16 bit
+								(SEXT_Select == 4'b0010) ? {{7{const_n[8]}}, const_n[8:0]}: // 9 -> 16 bit
+								(SEXT_Select == 4'b0001) ? {{5{const_n[10]}}, const_n[10:0]}: 7'd77; // 10 -> 16-bit
 
 	
 	// ALU FUNCTIONALITY
