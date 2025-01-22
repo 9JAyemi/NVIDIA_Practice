@@ -2,7 +2,7 @@
 // Memory with 2 read ports, 1 write port
 //==============================================================================
 
-module Memory
+module Memory1
 #(
 	parameter N_ELEMENTS = 128,      // Number of Memory Elements
 	parameter ADDR_WIDTH = 16,        // Address Width (in bits)

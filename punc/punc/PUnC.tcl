@@ -1,5 +1,5 @@
 analyze -sv PUnC1.v
-elaborate -top PUnC
+elaborate -top PUnC1
 
 clock clk
 reset rst

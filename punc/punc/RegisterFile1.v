@@ -2,7 +2,7 @@
 // Register File with 3 read ports, 1 write port
 //==============================================================================
 
-module RegisterFile
+module RegisterFile1
 #(
 	parameter N_ELEMENTS = 8,         // Number of Memory Elements
 	parameter ADDR_WIDTH = 3,         // Address Width (in bits)

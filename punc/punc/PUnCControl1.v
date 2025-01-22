@@ -5,7 +5,7 @@
 `include "Defines.v"
 
 
-module PUnCControl(
+module PUnCControl1(
 	// External Inputs
 	input  wire        clk,            // Clock
 	input  wire        rst,            // Reset

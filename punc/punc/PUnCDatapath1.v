@@ -6,7 +6,7 @@
 `include "RegisterFile1.v"
 `include "Defines.v"
 
-module PUnCDatapath(
+module PUnCDatapath1(
 	// External Inputs
 	input  wire        clk,            // Clock
 	input  wire        rst,            // Reset
@@ -125,7 +125,7 @@ module PUnCDatapath(
 
 
 	// 1024-entry 16-bit memory (connect other ports)
-	Memory mem(
+	Memory1 mem(
 		.clk      (clk),
 		.rst      (rst),
 		.r_addr_0 (mem_r_addr), // INT
@@ -150,7 +150,7 @@ module PUnCDatapath(
 	
 
 	// 8-entry 16-bit register file (connect other ports)
-	RegisterFile rfile(
+	RegisterFile1 rfile(
 		.clk      (clk),
 		.rst      (rst),
 		.r_addr_0 (RF_r_addr_0), // EXT

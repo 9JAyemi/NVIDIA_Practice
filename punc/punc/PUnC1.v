@@ -5,7 +5,7 @@
 `include "PUnCDatapath1.v"
 `include "PUnCControl1.v"
 
-module PUnC(
+module PUnC1(
 	// External Inputs
 	input  wire        clk,            // Clock
 	input  wire        rst,            // Reset
@@ -67,7 +67,7 @@ module PUnC(
 	//----------------------------------------------------------------------
 	// Control Module
 	//----------------------------------------------------------------------
-	PUnCControl ctrl(
+	PUnCControl1 ctrl(
 		.clk             (clk),
 		.rst             (rst),
 
@@ -102,7 +102,7 @@ module PUnC(
 	//----------------------------------------------------------------------
 	// Datapath Module
 	//----------------------------------------------------------------------
-	PUnCDatapath dpath(
+	PUnCDatapath1 dpath(
 		.clk             (clk),
 		.rst             (rst),
 
