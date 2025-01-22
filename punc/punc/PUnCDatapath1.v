@@ -96,7 +96,7 @@ module PUnCDatapath1(
 	// cheat
 	reg [15:0] indirect;
 	always @(posedge clk) begin
-	indirect = mem_r_data;
+	indirect <= mem_r_data;
 	end
 
 	wire [15:0] alu_c;
