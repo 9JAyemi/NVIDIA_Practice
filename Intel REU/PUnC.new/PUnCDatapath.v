@@ -304,6 +304,7 @@ end
 
         if(rst) begin
         pc <= 0;
+        
     
     end
 
