@@ -6,5 +6,5 @@ elaborate -top PUnC
 clock clk
 reset rst
 
-assert {rst |-> ##1 pc == 0}
+assert {rst |-> ##1 pc_ld == 0}
 
