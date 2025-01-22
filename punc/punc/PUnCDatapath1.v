@@ -84,11 +84,7 @@ module PUnCDatapath(
 	wire [15:0] RF_r_data_1; // INT
 	wire [15:0] RF_wr_data; // INT /*this channel should be a wire*/
 	
-
-	// Assign PC debug net
-	assign pc_debug_data = pc;
-
-	//----------------------------------------------------------------------
+//----------------------------------------------------------------------
 	// Local Register 'Modules'
 	//----------------------------------------------------------------------
 	reg  [15:0] pc;
@@ -106,6 +102,10 @@ module PUnCDatapath(
 	wire [15:0] alu_c;
 	wire [15:0] sign_extended_const;
 	wire [15:0] pc_adder; 
+	// Assign PC debug net
+	assign pc_debug_data = pc;
+
+	
 
 	//----------------------------------------------------------------------
 	// Memory Module
