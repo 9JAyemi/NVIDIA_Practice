@@ -53,7 +53,7 @@ module PUnCControl1(
    
 
    // SEXT Controls
-   output reg		[10:0] const,
+   output reg		[10:0] const_n,
    output reg		[3:0]  SEXT_Select
 );
 
@@ -95,7 +95,7 @@ module PUnCControl1(
 		n = 1'd0;
 		z = 1'd0;
 		p = 1'd0;
-		const = 11'b00000000000;
+		const_n = 11'b00000000000;
 		SEXT_Select = 4'b0000;
 
 		// Add your output logic here
@@ -116,7 +116,7 @@ module PUnCControl1(
 				add_const = ir[`Bit5]; // set to bit 5 for add instruction
 				cc_en = 1'd1;
 
-				const = 11'd0 + ir[`imm5];
+				const_n = 11'd0 + ir[`imm5];
 				SEXT_Select = 4'b1000;
 
 				RF_wr_addr = ir[`DR_11to9];
@@ -130,7 +130,7 @@ module PUnCControl1(
 				add_const = ir[`Bit5]; // set to bit 5 for add instruction
 				cc_en = 1'd1;
 
-				const = 11'd0 + ir[`imm5];
+				const_n = 11'd0 + ir[`imm5];
 				SEXT_Select = 4'b1000;
 
 				RF_wr_addr = ir[`DR_11to9];
@@ -140,7 +140,7 @@ module PUnCControl1(
 			end
 
 			`OC_BR: begin
-				const = 11'd0 + ir[`PCOffset9];
+				const_n = 11'd0 + ir[`PCOffset9];
 				SEXT_Select = 4'b0010;
 				
 				cc_en = 1'd0;
@@ -160,7 +160,7 @@ module PUnCControl1(
 				pc_ld = 1;
 				JMP_RET_JSRR = ~ir[`JSR_BIT_NUM];
 
-				const = ir[`PCOffset11];
+				const_n = ir[`PCOffset11];
 				SEXT_Select = 4'b0001;
 
 				RF_wr_en = 1'd1;
@@ -172,7 +172,7 @@ module PUnCControl1(
 			`OC_LD: begin
 				mem_r_addr_sel = 2'b01; // state_LD (s0) = 1
 
-				const = 11'd0 + ir[`PCOffset9];
+				const_n = 11'd0 + ir[`PCOffset9];
 				SEXT_Select = 4'b0010;
 
 				cc_en = 1;
@@ -185,7 +185,7 @@ module PUnCControl1(
 			`OC_LDIC1: begin
 				mem_r_addr_sel = 2'b01; // state_LD (s0) = 1
 
-				const = 11'd0 + ir[`PCOffset9];
+				const_n = 11'd0 + ir[`PCOffset9];
 				SEXT_Select = 4'b0010;
 
 				// RF_w_data_sel = 2'b10; // mem_ld (s1) = 1
@@ -210,7 +210,7 @@ module PUnCControl1(
 				alu_sel = 2'b01;
 				add_const = 1'd1;
 
-				const = 11'd0 + ir[`offset6];
+				const_n = 11'd0 + ir[`offset6];
 				SEXT_Select = 4'b0100;
 
 				cc_en = 1'd1;
@@ -222,7 +222,7 @@ module PUnCControl1(
 			end
 
 			`OC_LEA: begin
-				const = 11'd0 + ir[`PCOffset9];
+				const_n = 11'd0 + ir[`PCOffset9];
 				SEXT_Select = 4'b0010;
 
 				cc_en = 1;
@@ -246,7 +246,7 @@ module PUnCControl1(
 				RF_r_addr_0 = ir[`SR_11to9];
 				mem_wr_en = 1'd1;
 				SEXT_Select = 4'b0010;
-				const = 11'd0 + ir[`PCOffset9]; 	
+				const_n = 11'd0 + ir[`PCOffset9]; 	
 			end
 
 			// sti is wrong because we should still have PC+SEXT in second cycle
@@ -255,7 +255,7 @@ module PUnCControl1(
 				// RF_r_addr_0 = ir[`SR_11to9];
 
 				SEXT_Select = 4'b0010;
-				const = 11'd0 + ir[`PCOffset9];				
+				const_n = 11'd0 + ir[`PCOffset9];				
 			end
 
 			`OC_STI2: begin // this might be a problem
@@ -263,7 +263,7 @@ module PUnCControl1(
 				mem_wr_en = 1'd1;
 
 				SEXT_Select = 4'b0010;
-				const = 11'd0 + ir[`PCOffset9];	
+				const_n = 11'd0 + ir[`PCOffset9];	
 
 				state2_STI = 1'd1;					
 			end
@@ -273,7 +273,7 @@ module PUnCControl1(
 				add_const = 1'd1;
 
 				SEXT_Select = 4'b0100;
-				const = 11'd0 + ir[`offset6];
+				const_n = 11'd0 + ir[`offset6];
 				RF_r_addr_0 = ir[`BaseR_8to6];
 				RF_r_addr_1 = ir[`SR_11to9];
 
