@@ -3,7 +3,7 @@
 //==============================================================================
 
 `include "Memory1.v"
-`include "RegisterFile.v"
+`include "RegisterFile1.v"
 `include "Defines.v"
 
 module PUnCDatapath(
