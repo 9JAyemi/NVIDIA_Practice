@@ -5,352 +5,310 @@
 `include "Defines.v"
 
 module PUnCControl(
-    // External Inputs
-    input  wire        clk,            // Clock
-    input  wire        rst,           // Reset
+	// External Inputs
+	input  wire        clk,            // Clock
+	input  wire        rst,            // Reset
 
-// INPUT  WIRES 
-    input wire bit_5,  // signal used for imm5 operations
-    input wire bit_11, // signal used for PCoffset11 operations
-	input wire bit_8,
-	input wire bit_7,
-	input wire bit_6,
-    input [15:0] ir, // ouput from ir register 
-    input wire n,
-    input wire z,
-    input wire p,
-    input  N,
-    input  Z,
-    input  P,
-      
-//OUTPUT WIRES
+	// outputs to the datapath
+	output reg [1:0] extend,
+	output reg op2,
+	output reg ir_ld,
+	output reg [1:0] op1,
+	output reg [2:0] result,
+	output reg rf_w_en,
+	output reg decode,
+	output reg [1:0] pc_select,
+	output reg branch,
+	output reg [2:0] mem_read_loc,
+	output reg [1:0] mem_write_loc,
+	output reg mem_w_en,
 
-    output reg [2:0] mem_raddr_sig, // signal for mux for  r_addr_0_mem input
-
-    output reg w_data_mem_sig,
-
-    output reg [1:0] reg_wdata_sig, // signal for mux for  w_data_reg input
-
-    output reg [1:0] reg_raddr0_sig, // signal for mux to determine which address in the register to read
-
-    output reg  reg_raddr1_sig,  // signal for mux to determine which address in the register to read
-
-    output reg mem_waddr_sig, // signal to allow for  w_addr_mem input 
-
-    output reg mem_w_en_sig, // signal to allow for w_en_mem to enable writting to memory 
-
-//  input  mem_w_data,  // signal for mux for w_data_mem input (DELETE?)
-
-    output reg reg_waddr_sig, // signal for mux for w_addr_reg input (DELETE?)
-
-    output reg reg_w_en_sig, // signal to allow for w_en_reg to enable writting to register 
-
-    output reg pc_ld,  
-
-    output reg ir_ld,
-
-    output reg [1:0] alu_sig,    // signal for ALU related computation (might need to change size)
-
-     // input wire [2:0] offset_sel, // signal used to select which bit gets offset (MIGHT DELETE)
-
-    output reg [2:0] pc_mux, // signal used to select what gets loaded into the pc 
-
-    output reg [2:0] alu_input1_sig,
-
-    output reg [3:0] alu_input2_sig,
-
-    output reg cc_sig, 
-
-    output reg nzp_mux,
-
-    output reg sti1_sig,
-
-    output reg ldi1_sig
-    
-    
-
+	// input from the datapath
+	input wire [3:0] opcode, 
+	input bitfive,
+	input biteleven,
+	input [2:0] pc_instr,
+	input br_enable
 );
 
-    // FSM States
+	// FSM States
+	// Add your FSM State values as localparams here
+	localparam STATE_FETCH = 5'd0;
+	localparam STATE_DECODE = 5'd1;
+	localparam STATE_ADD1 = 5'd2;
+	localparam STATE_ADD2 = 5'd3;
+	localparam STATE_AND1 = 5'd4;
+	localparam STATE_AND2 = 5'd5;
+	localparam STATE_BR = 5'd6;
+	localparam STATE_JMPRET = 5'd7;
+	localparam STATE_JSR = 5'd8;
+	localparam STATE_JSRR = 5'd9;
+	localparam STATE_LD = 5'd10;
+	localparam STATE_LDI1 = 5'd11;
+	localparam STATE_LDI2 = 5'd12;
+	localparam STATE_LDR = 5'd13;
+	localparam STATE_LEA = 5'd14;
+	localparam STATE_NOT = 5'd15;
+	localparam STATE_ST = 5'd16;
+	localparam STATE_STI = 5'd17;
+	localparam STATE_STR = 5'd18;
+	localparam STATE_HALT = 5'd19;
 
-    // Add your FSM State values as localparams here
-    localparam STATE_FETCH     = 5'd0;
-    localparam STATE_DECODE     = 5'd1;
-    localparam STATE_EXECUTE = 5'd2;
-    localparam STATE_EXECUTE2 = 5'd3;
-    localparam STATE_HALT = 5'd4;
+	// State, Next State
+	reg [4:0] state, next_state;
+
+	// Output Combinational Logic
+	always @( * ) begin
+		// Set default values for outputs here (prevents implicit latching)
+		decode = 0;
+		extend = `extend_pc6;
+		op1 = `op1_base_r;
+		op2 = `op2_r_data1;
+		ir_ld = 0;
+		result = 0;
+		rf_w_en = 0;
+		branch = 0;
+		pc_select = 2'b00;
+		mem_read_loc = 0;
+		mem_write_loc = 0;
+		mem_w_en = 0;
+
+		// Add your output logic here
+		case (state)
+			STATE_FETCH: begin
+				ir_ld = 1;
+			end
+			STATE_DECODE: begin
+				decode = 1;
+			end
+			STATE_ADD1: begin
+				op1 = `op1_r_data0;
+				op2 = `op2_r_data1;
+				rf_w_en = 1;
+				result = `result_sum;
+			end
+			STATE_ADD2: begin
+				extend = `extend_imm5;
+				op1 = `op1_r_data0;
+				op2 = `op2_extended;
+				rf_w_en = 1;
+				result = `result_sum;
+			end
+			STATE_AND1: begin
+				op1 = `op1_r_data0;
+				op2 = `op2_r_data1;
+				rf_w_en = 1;
+				result = `result_and;
+			end
+			STATE_AND2: begin
+				extend = `extend_imm5;
+				op1 = `op1_r_data0;
+				op2 = `op2_extended;
+				rf_w_en = 1;
+				result = `result_and;
+			end
+			STATE_BR: begin
+				extend = `extend_pc9;
+				op1 = `op1_pc;
+				op2 = `op2_extended;
+				result = `result_pc;
+				if (br_enable == 1) begin
+					pc_select = `pc_select_jsr;
+				end
+				else begin
+					pc_select = 0;
+				end
+			end
+			STATE_JMPRET: begin
+				op1 = `op1_base_r;
+				pc_select = `pc_select_jmp;
+			end
+			STATE_JSR: begin
+				extend = `extend_pc11;
+				op1 = `op1_pc;
+				rf_w_en = 1;
+				op2 = `op2_extended;
+				result = `result_pc;
+				pc_select = `pc_select_jsr;
+			end
+			STATE_JSRR: begin
+				op1 = `op1_base_r;
+				rf_w_en = 1;
+				result = `result_pc;
+				pc_select = `pc_select_jsrr;
+			end
+			STATE_LD: begin
+				extend = `extend_pc9;
+				op1 = `op1_pc;
+				op2 = `op2_extended;
+				rf_w_en = 1;
+				result = `result_mem;
+				mem_read_loc = `mem_read_loc_ld;
+				mem_w_en = 1;
+			end
+			STATE_LDI1: begin
+				extend = `extend_pc9;
+				op1 = `op1_pc;
+				op2 = `op2_extended;
+				rf_w_en = 1;
+				result = `result_mem;
+				mem_read_loc = `mem_read_loc_ldi1;
+				mem_w_en = 1;
+			end
+			STATE_LDI2: begin
+				extend = `extend_pc9;
+				op1 = `op1_pc;
+				op2 = `op2_extended;
+				rf_w_en = 1;
+				result = `result_mem;
+				mem_read_loc = `mem_read_loc_ldi2;
+				mem_w_en = 1;
+			end
+			STATE_LDR: begin
+				extend = `extend_pc6;
+				op1 = `op1_base_r;
+				op2 = `op2_extended;
+				rf_w_en = 1;
+				result = `result_mem;
+				mem_read_loc = `mem_read_loc_ldr;
+				mem_w_en = 1;
+			end
+			STATE_LEA: begin
+				extend = `extend_pc9;
+				op1 = `op1_pc;
+				op2 = `op2_extended;
+				rf_w_en = 1;
+				result = `result_sum;
+			end
+			STATE_NOT: begin
+				op1 = `op1_r_data0;
+				rf_w_en = 1;
+				result = `result_not;
+			end
+			STATE_ST: begin
+				extend = `extend_pc9;
+				op1 = `op1_pc;
+				op2 = `op2_extended;
+				result = `result_sum;
+				mem_write_loc = `mem_write_loc_st;
+				mem_w_en = 1;
+			end
+			STATE_STI: begin
+				extend = `extend_pc9;
+				op1 = `op1_pc;
+				op2 = `op2_extended;
+				result = `result_sum;
+				mem_write_loc = `mem_write_loc_sti;
+				mem_w_en = 1;
+			end
+			STATE_STR: begin
+				extend = `extend_pc6;
+				op1 = `op1_base_r;
+				op2 = `op2_extended;
+				result = `result_sum;
+				mem_write_loc = `mem_write_loc_str;
+				mem_w_en = 1;
+			end
+			STATE_HALT: begin
+				
+			end
+		endcase
+	end
+
+	// Next State Combinational Logic
+	always @( * ) begin
+		// Set default value for next state here
+		next_state = state;
+
+		// Add your next-state logic here
+		case (state)
+			STATE_FETCH: begin
+				next_state = STATE_DECODE;
+			end
+			STATE_DECODE: begin
+				case (opcode) 
+					4'b0001 : begin
+						if (bitfive == 0) begin
+							next_state = STATE_ADD1;
+						end 
+						else if (bitfive == 1) begin
+							next_state = STATE_ADD2;
+						end
+					end
+					4'b0101 : begin
+						if (bitfive == 0) begin
+							next_state = STATE_AND1;
+						end 
+						else if (bitfive == 1) begin
+							next_state = STATE_AND2;
+						end
+					end
+					4'b0000 : begin
+						next_state = STATE_BR;
+					end
+					4'b1100: begin
+						next_state = STATE_JMPRET;
+					end
+					4'b0100 : begin
+						if (biteleven == 0) begin
+							next_state = STATE_JSRR;
+						end 
+						else if (biteleven == 1) begin
+							next_state = STATE_JSR;
+						end
+					end
+					4'b0010 : begin
+						next_state = STATE_LD;
+					end
+					4'b1010 : begin
+						next_state = STATE_LDI1;
+					end
+					4'b0110 : begin
+						next_state = STATE_LDR;
+					end
+					4'b1110 : begin
+						next_state = STATE_LEA;
+					end
+					4'b1001 : begin
+						next_state = STATE_NOT;
+					end
+					4'b0011 : begin
+						next_state = STATE_ST;
+					end
+					4'b1011 : begin
+						next_state = STATE_STI;
+					end
+					4'b0111 : begin
+						next_state = STATE_STR;
+					end
+					4'b1111 : begin
+						next_state = STATE_HALT;
+					end
+				endcase
+			end
+			STATE_HALT: begin
+				next_state = STATE_HALT;
+			end
+			STATE_LDI1: begin
+				next_state = STATE_LDI2;
+			end
+			default: begin
+				next_state = STATE_FETCH;
+			end
+		endcase
+	end
 
 
-    // State, Next State
-    reg [5:0] state, next_state;
-
-    // Output Combinational Logic
-    always @( * ) begin
-        // Set default values for outputs here (prevents implicit latching)
- mem_raddr_sig = 0;
-
- w_data_mem_sig = 0;
-
-reg_wdata_sig = 0;
-
-reg_raddr0_sig = 0;
-
-reg_raddr1_sig = 0;
-
-mem_waddr_sig = 0;
-
-mem_w_en_sig = 0;
-
-//  input  mem_w_data,  // signal for mux for w_data_mem input (DELETE?)
-
-reg_waddr_sig = 0;
-
-reg_w_en_sig = 0;
-
-pc_ld = 0; 
-
-ir_ld = 0;
-
-alu_sig = 0;    
-
-     // input wire [2:0] offset_sel, // signal used to select which bit gets offset (MIGHT DELETE)
- pc_mux = 0; // signal used to select what gets loaded into the pc 
-
-alu_input1_sig = 0;
-
-alu_input2_sig = 0;
-
- cc_sig = 0;
-
- nzp_mux = 0;
-
-sti1_sig = 0;
-
-ldi1_sig = 0;
-
-        // Add your output logic here
-        case (state)
-    STATE_FETCH: begin
-     //   reg_raddr0_sig = 2'b11;
-     mem_raddr_sig = 2'b00;
-      ir_ld = 1;
-    end
-    STATE_DECODE: begin
-        pc_ld = 1;
-    end
-   
-   STATE_EXECUTE: begin
-
-    case(ir[`OC])
- `OC_ADD: begin
-    if(bit_5 == 0) begin
-        reg_w_en_sig = 1;
-        cc_sig = 1;
-    end
-    else begin
-        reg_w_en_sig = 1;
-        alu_input2_sig = 3'b001;
-        cc_sig = 1;
-    end
-    
-    end
-   
-    `OC_AND: begin
-        if(bit_5 == 0) begin
-        reg_w_en_sig = 1;
-        alu_sig = 2'b01;
-        cc_sig = 1;
-        end
-    else begin
-    reg_w_en_sig = 1;
-     alu_sig = 2'b01;
-    alu_input2_sig = 3'b001;
-    cc_sig = 1;
-    end
-    end
-
-    `OC_BR: begin
-        if((n && N) || (z && Z) || (p && P)) begin
-        pc_mux = 3'b001;
-        pc_ld = 1;
-        alu_input1_sig = 1;
-        alu_input2_sig = 3'b010;
-        end
-    end
-
-    `OC_JMP: begin
-		if(bit_8 && bit_7 && bit_6) begin
-			reg_raddr0_sig = 2'b10;
-        	pc_ld = 1;
+	// State Update Sequential Logic
+	always @(posedge clk) begin
+		if (rst) begin
+			// Add your initial state here
+			state <= STATE_FETCH;
 		end
 		else begin
-        pc_mux = 3'b010;
-        pc_ld = 1;
+			// Add your next state here
+			state <= next_state;
 		end
-    end
-
-    `OC_JSR: begin //needs debugging
-        reg_waddr_sig = 1;
-        reg_w_en_sig = 1;
-        reg_wdata_sig = 2'b10;
-    end
-
-   `OC_LD: begin
-    reg_w_en_sig = 1;
-    alu_input1_sig = 2'b01; //pc
-    alu_input2_sig = 3'b010; //SEXT(PCoffset9)
-    mem_raddr_sig = 2'b01; // mem(pc + SEXT(PCoffset9))
-    reg_wdata_sig = 1;
-    cc_sig = 1;
-    nzp_mux = 1;
-    end 
-
-    `OC_LDI: begin
-    
-        mem_raddr_sig = 2'b01; //mem(pc + SEXT(PCoffset9))
-        alu_input1_sig = 2'b01; //pc
-        alu_input2_sig = 3'b010; //SEXT(PCoffset9)
-        ldi1_sig = 1;
-    end
-
-    
-
-    `OC_LDR: begin 
-        mem_raddr_sig = 2'b01;
-        reg_w_en_sig = 1; 
-        alu_input2_sig = 3'b100; //SEXT(PCoffset6) 
-        cc_sig = 1;
-        nzp_mux = 1;
-        reg_wdata_sig = 1;
-    end 
-	
-    `OC_LEA: begin 
-        reg_w_en_sig = 1; 
-        reg_w_en_sig = 1;
-        mem_raddr_sig = 2'b01;
-        alu_input1_sig = 2'b01; //pc
-        alu_input2_sig = 3'b010; //SEXT(PCoffset9) 
-        cc_sig = 1;
-    end 
-    `OC_NOT: begin
-        alu_sig = 2'b11;
-        reg_w_en_sig = 1;
-        cc_sig = 1;
-    end 
-
-    `OC_ST: begin 
-     alu_input1_sig = 2'b01; //pc
-    alu_input2_sig = 3'b010; // SEXT(PCoffset9)
-    reg_raddr0_sig = 2'b01; //reading data from adress at ir_output[11:9]
-    mem_w_en_sig = 1;
-    end 
-
-    `OC_STI: begin 
-    alu_input1_sig = 2'b01; //pc
-    alu_input2_sig = 3'b010; // SEXT(PCoffset9)
-   mem_raddr_sig = 2'b01; //reading data from adress at ir_output[11:9]
-    sti1_sig = 1;
-    end 
-
-    
-
-    `OC_STR: begin 
-    alu_input2_sig = 3'b100; // SEXT(PCoffset6)
-    reg_raddr1_sig = 2'b01; //reading data from adress at ir_output[11:9]
-    w_data_mem_sig = 1;
-    mem_w_en_sig = 1;
-  //  reg_raddr0_sig = 2'b01;
-    end 
-
-    `OC_HLT: begin 
-   
-    end
-    endcase
-   end
-
-   STATE_EXECUTE2: begin
-    case(ir[`OC])
-
-    `OC_JSR: begin //put in second execute 
-        if(bit_11 == 0) begin
-        pc_mux = 3'b010;  
-        pc_ld = 1;
-        end
-        else begin
-        pc_mux = 3'b001; // alu ouput ADD
-        pc_ld = 1;
-        alu_input1_sig = 2'b01; //pc
-        alu_input2_sig = 3'b011; //SEXT(PCoffset11)
-        end
-    end
-    `OC_LDI: begin //put in second execute
-         reg_w_en_sig = 1;
-        mem_raddr_sig = 2'b10; // ldi1 
-        reg_wdata_sig = 1; //
-        cc_sig = 1;
-        nzp_mux = 1;
-    end 
-    `OC_STI: begin  // put in execute 2
-          mem_waddr_sig = 1;
-         mem_w_en_sig = 1;
-         reg_raddr0_sig = 2'b01;
-    end 
-    endcase
-   end
-        endcase
-        
-        
-    end
-
-    // Next State Combinational Logic
-    always @( * ) begin
-        // Set default value for next state here
-        next_state = state;
-
-        // Add your next-state logic here
-        case (state)
-        
-        STATE_FETCH: begin
-            next_state = STATE_DECODE;
-         end
-
-        STATE_DECODE: begin
-            next_state = STATE_EXECUTE;
-         end
-
-         STATE_EXECUTE: begin
-            if(ir[`OC] == `OC_LDI || ir[`OC] == `OC_STI || ir[`OC] == `OC_JSR ) begin
-                next_state = STATE_EXECUTE2;
-            end
-            else if(ir[`OC] == `OC_HLT) begin
-                next_state = STATE_HALT;
-            end
-            else  begin
-                next_state = STATE_FETCH;
-            end
-            end
-         
-         STATE_EXECUTE2: begin
-            next_state = STATE_FETCH;
-         end
-
-         STATE_HALT: begin
-            next_state = STATE_HALT;
-         end
-        endcase
-
-    end
-
-    // State Update Sequential Logic
-    always @(posedge clk) begin
-        if (rst) begin
-            // Add your initial state here
-            state <= STATE_FETCH;
-        end
-        else begin
-            // Add your next state here
-            state <= next_state;
-        end
-    end
+	end
 
 endmodule
