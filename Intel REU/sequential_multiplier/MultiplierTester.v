@@ -52,8 +52,8 @@ Multiplier #(WIDTH) multTwo(
     .clk(clk),
 	.rst(rst),
     .start(start),
-    .multiplier(multiplierTwo),
-    .multiplicand(multiplicandTwo),
+    .multiplier(multiplicandOne),
+    .multiplicand(multiplierOne),
 	.product(productTwo),
     .productDone(productDoneTwo)
 );
