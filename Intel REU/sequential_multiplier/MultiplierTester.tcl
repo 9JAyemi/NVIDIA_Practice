@@ -8,7 +8,7 @@ reset rst
 # check if there is a timing attack possible that leaks secret
 assert {multiplicandOne == multiplicandTwo && oneDone -> bothDone}
 
-assert {bothDone -> productOne == productTwo}
+assert { bothDone -> productOne == productTwo}
 
 # Set the time limit to 1 hour (3600 seconds)
 set_prove_time_limit 3600
