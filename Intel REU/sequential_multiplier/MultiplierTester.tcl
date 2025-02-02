@@ -9,7 +9,7 @@ reset rst
 assert {multiplicandOne == multiplicandTwo && oneDone -> bothDone}
 
 
-assert {multiplierOne == multiplicandTwo && multiplierTwo == multiplicandOne && bothDone |-> productOne == productTwo}
+assert {multiplierOne == multiplicandTwo && multiplierTwo == multiplicandOne && bothDone |=> ##1 productOne == productTwo}
 
 # Set the time limit to 1 hour (3600 seconds)
 set_prove_time_limit 3600
