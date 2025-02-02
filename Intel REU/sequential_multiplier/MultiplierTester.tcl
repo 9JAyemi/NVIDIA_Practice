@@ -8,6 +8,7 @@ reset rst
 # check if there is a timing attack possible that leaks secret
 assert {multiplicandOne == multiplicandTwo && oneDone -> bothDone}
 
+assume {multiplierOne == multiplicandTwo && multiplierTwo == multiplicandOne}
 assert { bothDone -> productOne == productTwo}
 
 # Set the time limit to 1 hour (3600 seconds)
