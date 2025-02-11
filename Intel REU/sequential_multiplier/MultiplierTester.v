@@ -47,7 +47,7 @@ Multiplier #(WIDTH) multOne(
 	.product(productOne),
     .productDone(productDoneOne)
 );
-
+    
 Multiplier #(WIDTH) multTwo(
     .clk(clk),
 	.rst(rst),
