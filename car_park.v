@@ -39,7 +39,7 @@ module parking_system(
  always @(*)
  begin
  case(current_state)
- 
+
  IDLE: begin
          if(sensor_entrance == 1)
  next_state = WAIT_PASSWORD;
@@ -48,6 +48,7 @@ module parking_system(
  end
 
  WAIT_PASSWORD: begin
+    
  if(counter_wait <= 3)
  next_state = WAIT_PASSWORD;
  else 
@@ -88,36 +89,42 @@ module parking_system(
  // LEDs and output, change the period of blinking LEDs here
  always @(posedge clk) begin 
  case(current_state)
+
  IDLE: begin
  green_tmp = 1'b0;
  red_tmp = 1'b0;
  HEX_1 = 7'b1111111; // off
  HEX_2 = 7'b1111111; // off
  end
+
  WAIT_PASSWORD: begin
  green_tmp = 1'b0;
  red_tmp = 1'b1;
  HEX_1 = 7'b000_0110; // E
  HEX_2 = 7'b010_1011; // n 
  end
+
  WRONG_PASS: begin
  green_tmp = 1'b0;
  red_tmp = ~red_tmp;
  HEX_1 = 7'b000_0110; // E
  HEX_2 = 7'b000_0110; // E 
  end
+
  RIGHT_PASS: begin
  green_tmp = ~green_tmp;
  red_tmp = 1'b0;
  HEX_1 = 7'b000_0010; // 6
  HEX_2 = 7'b100_0000; // 0 
  end
+
  STOP: begin
  green_tmp = 1'b0;
  red_tmp = ~red_tmp;
  HEX_1 = 7'b001_0010; // 5
  HEX_2 = 7'b000_1100; // P 
  end
+
  endcase
  end
  assign RED_LED = red_tmp  ;
