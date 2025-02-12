@@ -7,7 +7,7 @@ reset reset_n
 
 #reset condition
 assert {!reset_n |-> ##1 counter_wait == 0 && green_tmp == 1'b0 && red_tmp == 1'b0}
-assert {current_state == STOP && password_2!=2'b10 |-> current_state == STOP}
+assert {current_state == STOP && password_2!=2'b10 |-> !current_state == STOP}
 
 set_prove_time_limit 3600
 set_engine_mode Tri
