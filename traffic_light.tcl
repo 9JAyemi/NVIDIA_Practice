@@ -8,7 +8,8 @@ reset rst_a
 assert {(rst_a) |-> ##1 (state == 0) && (count == 0)}
 
 #ensure that state is still in north when count is not at 7
-assert {(state == north && count < 3'b111) |=> (state == $past(state)) }
+assume {(state == north)}
+assert {count < 3'b111 |=> (state == $past(state)) }
 
 #ensure state transition
 assert {(state == north) && (count == 3'b111) |=> (state == north_y)}
