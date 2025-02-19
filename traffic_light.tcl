@@ -5,4 +5,4 @@ clock clk
 reset rst_a
 
 #reset condtion
-assert {rst_a |-> ##[1:3] state == north}
+assert {rst_a |-> ##13 state == north}
