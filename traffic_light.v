@@ -18,9 +18,9 @@ module traffic_control(n_lights,s_lights,e_lights,w_lights,clk,rst_a);
    reg [2:0] count;
  
 
-   always @(posedge clk, posedge rst_a)
+   always @(posedge clk)
      begin
-        if (rst_a)
+        if (!rst_a)
             begin
                 state <= north;
                 count <= 3'b000;

@@ -7,7 +7,7 @@ reset !rst_n
 
 
 #check for rst_n working
-assert {rst_n |-> ##1 (w_ptr == 0)}
+assert {!rst_n |-> ##1 (w_ptr == 0)}
 assert {!rst_n |-> ##1 (r_ptr == 0)}
 assert {!rst_n |-> ##1 (data_out == 0)}
 # how would you check if count changed from one clock cycle ($past)
