@@ -5,7 +5,7 @@ clock clk
 reset rst_a
 
 #reset condtion
-assert {rst_a |-> ##[1:3] state == 32754}
+assert {rst_a && clk |-> ##[1:3] state == 32754}
 
 set_prove_time_limit 3600
 set_engine_mode Tri
