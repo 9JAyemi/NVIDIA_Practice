@@ -13,6 +13,10 @@ assert {(state == north) && (count != 3'b111) |-> ##1 (state == $past(state)) }
 #ensure state transition
 assert {(state == north) && (count == 3'b111) |=> (state == north_y)}
 
+assume {(clk != 1)}
+assert {(rst_a) |-> ##1 (state == 0) && (count == 0)}
+
+
 set_prove_time_limit 3600
 set_engine_mode Tri
 prove -all
