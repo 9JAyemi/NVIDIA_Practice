@@ -6,8 +6,8 @@ module traffic_control(n_lights,s_lights,e_lights,w_lights,clk,rst_a);
  
    reg [2:0] state;
  
-   parameter [2:0] north=3'b000;
-   parameter [2:0] north_y=3'b001;
+   parameter [2:0] north= 3'b000;
+   parameter [2:0] north_y= 3'b001;
    parameter [2:0] south=3'b010;
    parameter [2:0] south_y=3'b011;
    parameter [2:0] east=3'b100;
