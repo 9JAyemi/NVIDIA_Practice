@@ -24,6 +24,8 @@ assert {empty && r_en && !w_en |-> ##1 $stable(count)}
 
 assert {!rst_n |-> ##4 w_en & !full & (fifo[w_ptr] == data_in)}
 
+assert {full |=> w_ptr < DEPTH}
+
 
 # Set the time limit to 1 hour (3600 seconds)
 set_prove_time_limit 3600

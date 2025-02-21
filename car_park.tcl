@@ -9,6 +9,8 @@ reset reset_n
 assert {!reset_n |-> ##1 (counter_wait == 1) && (green_tmp == 1'b0) && (red_tmp == 1'b0)}
 assert {current_state == 3'b001 |=> HEX_1 == 7'b000_0110}
 
+
+
 set_prove_time_limit 3600
 set_engine_mode Tri
 prove -all
