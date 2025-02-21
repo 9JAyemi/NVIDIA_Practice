@@ -23,7 +23,7 @@ assert {pclk |=> pattern_leds == pattern }
 
 assert {(mode_leds == 3'b010) && (!i_eq_ns) |-> ##1 mode_leds == $past(mode_leds)}
 
-assume {!rst}
+# assume {!rst}
 assert {(mode_leds == 3'b100) && (!right_guess) |-> ##15 (mode_leds == 3'b111)}
 
 #In PLAYBACK stage, every press of pclk should have the pattern_leds playback the patterns one at 
