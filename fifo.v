@@ -35,7 +35,9 @@ end
 always @(posedge clk) begin
     if(w_en & !full) begin
         fifo[w_ptr] <= data_in;
+        if(w_ptr < DEPTH) begin
         w_ptr <= w_ptr + 1;
+        end
 
 end
 end
