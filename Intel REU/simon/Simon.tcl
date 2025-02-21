@@ -21,7 +21,7 @@ assert {pclk |=> pattern_leds == pattern }
 # assume {$rose(pclk) && $fell(pclk) |-> ##9 mode_leds == 3'b010}
 # assert {$rose(pclk) && $fell(pclk) |-> ##10 rst_i != 1 }
 
-assert {(mode_leds == 3'b010) && (!i_eq_ns) |-> ##1 mode_leds = $past(mode_leds)}
+assert {(mode_leds == 3'b010) && (!i_eq_ns) |-> ##1 mode_leds == $past(mode_leds)}
 
 #In PLAYBACK stage, every press of pclk should have the pattern_leds playback the patterns one at 
 #a time until there is no patterns left (I dont know how to test for multiple sets i.e when I need to set pattern twice in order to make sure pattern_leds plays back correctly)
