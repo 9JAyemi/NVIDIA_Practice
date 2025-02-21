@@ -121,6 +121,14 @@ module SimonControl(
 				next_state = DONE;
 			end
 		end
+		DONE: begin
+			if(rst) begin
+				next_state = INPUT;
+			end
+			else begin
+				next_state = DONE;
+			end
+		end
 		endcase
 	end
 
