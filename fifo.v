@@ -25,11 +25,8 @@ end
 else begin
       case({(w_en & !full),(r_en & !empty)})
         2'b00, 2'b11: count <= count;
-        if(count < DEPTH) begin
-            2'b01: count <= count - 1'b1;
+        2'b01: count <= count - 1'b1;
         2'b10: count <= count + 1'b1;
-        end
-        
       endcase
     end
 end
