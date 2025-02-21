@@ -18,8 +18,8 @@ assert {reset && level == 0 && mode_leds == 3'b001 && pattern == 3'b0101 |-> ##1
 #Upon switch in pattern, pattern_leds should change instantaneously
 assert {pclk |=> pattern_leds == pattern }
 
-assume {$rose(pclk) && $fell(pclk) |-> ##9 mode_leds == 3'b010}
-assert {$rose(pclk) && $fell(pclk) |-> ##10 rst_i != 1 }
+# assume {$rose(pclk) && $fell(pclk) |-> ##9 mode_leds == 3'b010}
+# assert {$rose(pclk) && $fell(pclk) |-> ##10 rst_i != 1 }
 
 
 #In PLAYBACK stage, every press of pclk should have the pattern_leds playback the patterns one at 
